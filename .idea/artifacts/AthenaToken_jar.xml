@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AthenaToken:jar">
+    <output-path>$PROJECT_DIR$/../localhost/plugins</output-path>
+    <root id="archive" name="AthenaToken.jar">
+      <element id="module-output" name="AthenaToken" />
+    </root>
+  </artifact>
+</component>

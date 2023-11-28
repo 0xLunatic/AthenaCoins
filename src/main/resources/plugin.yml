@@ -1,0 +1,7 @@
+name: AthenaToken
+version: '${project.version}'
+main: lunatic.athenatoken.Main
+api-version: '1.20'
+commands:
+  athenacoins:
+    permission: athenacoins.admin
