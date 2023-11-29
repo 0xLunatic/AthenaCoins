@@ -38,9 +38,6 @@ public class Database {
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
 
-        // Use DB
-        statement.execute("USE " + plugin.getConfig().getString("database.database"));
-
         // Create the table if it does not exist
         String createTableSQL = "CREATE TABLE IF NOT EXISTS coins(player_uuid varchar(36) primary key, player_name varchar(36), athena_coins int)";
         statement.executeUpdate(createTableSQL);
