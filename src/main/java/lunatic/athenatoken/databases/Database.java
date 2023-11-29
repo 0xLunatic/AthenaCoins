@@ -38,10 +38,6 @@ public class Database {
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
 
-        String createDatabaseSQL = "CREATE DATABASE IF NOT EXISTS " + plugin.getConfig().getString("database.database");
-        statement.executeUpdate(createDatabaseSQL);
-        System.out.println("Database not found, Creating new one.");
-
         // Use DB
         statement.execute("USE " + plugin.getConfig().getString("database.database"));
 
