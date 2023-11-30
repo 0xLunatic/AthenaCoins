@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class AthenaCommands implements CommandExecutor, Listener {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length <= 1 || (args[0].equalsIgnoreCase("add") && args.length < 3) ||
                 (args[0].equalsIgnoreCase("remove") && args.length < 3)) {
             sender.sendMessage("§cUsage: /athenacoins <add|remove|check|clear> [player] [value]");

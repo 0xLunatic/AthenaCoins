@@ -34,9 +34,9 @@ public final class Main extends JavaPlugin {
         getCommand("athenacoins").setExecutor(new AthenaCommands(this, database));
 
         // Check if PlaceholderAPI is present and register placeholder if true
-//        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-//            new PlaceholderManager(this, database).register();
-//        }
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderManager(this, database).register();
+        }
     }
 
     @Override

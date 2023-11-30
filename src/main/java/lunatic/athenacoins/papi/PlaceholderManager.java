@@ -44,13 +44,13 @@ public class PlaceholderManager extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("coins")) {
             UUID playerUUID = player.getUniqueId();
-            PlayerAthenaCoins coins = null;
+            PlayerAthenaCoins coins;
             try {
                 coins = database.getAthenaCoinsByUUID(playerUUID);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            return String.valueOf(coins);
+            return String.valueOf(coins.getAthenaCoins());
         }
         return null;
     }
