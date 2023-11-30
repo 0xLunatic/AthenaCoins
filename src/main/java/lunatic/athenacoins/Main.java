@@ -1,6 +1,7 @@
 package lunatic.athenacoins;
 
 import lunatic.athenacoins.commands.AthenaCommands;
+import lunatic.athenacoins.commands.TabCompleters;
 import lunatic.athenacoins.databases.Database;
 import lunatic.athenacoins.papi.PlaceholderManager;
 import org.bukkit.Bukkit;
@@ -32,6 +33,7 @@ public final class Main extends JavaPlugin {
 
         // Register commands
         getCommand("athenacoins").setExecutor(new AthenaCommands(this, database));
+        getCommand("athenacoins").setTabCompleter(new TabCompleters(this));
 
         // Check if PlaceholderAPI is present and register placeholder if true
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -51,5 +53,9 @@ public final class Main extends JavaPlugin {
             saveResource("config.yml", false);
             getLogger().info("Config.yml not found, creating default config.yml");
         }
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 }

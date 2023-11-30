@@ -4,7 +4,9 @@ import lunatic.athenacoins.Main;
 import lunatic.athenacoins.utils.PlayerAthenaCoins;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.List;
 
 public class Database {
     private final Main plugin;
@@ -108,5 +110,20 @@ public class Database {
 
         statement.executeUpdate();
         statement.close();
+    }
+
+    public List<String> getPlayers() throws SQLException {
+        List<String> players = new ArrayList<>();
+
+        PreparedStatement statement = getConnection()
+                .prepareStatement("SELECT player_name FROM coins LIMIT 50 OFFSET 0");
+
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            String playerName = resultSet.getString("player_name");
+            players.add(playerName);
+        }
+        statement.close();
+        return players;
     }
 }
