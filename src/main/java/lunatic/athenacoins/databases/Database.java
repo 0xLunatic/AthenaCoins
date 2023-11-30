@@ -1,7 +1,7 @@
-package lunatic.athenatoken.databases;
+package lunatic.athenacoins.databases;
 
-import lunatic.athenatoken.Main;
-import lunatic.athenatoken.utils.PlayerAthenaCoins;
+import lunatic.athenacoins.Main;
+import lunatic.athenacoins.utils.PlayerAthenaCoins;
 
 import java.sql.*;
 import java.util.UUID;

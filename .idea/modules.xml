@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AthenaToken.iml" filepath="$PROJECT_DIR$/AthenaToken.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AthenaCoins.iml" filepath="$PROJECT_DIR$/AthenaCoins.iml" />
     </modules>
   </component>
 </project>

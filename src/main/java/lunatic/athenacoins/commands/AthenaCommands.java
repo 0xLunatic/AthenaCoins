@@ -1,8 +1,8 @@
-package lunatic.athenatoken.commands;
+package lunatic.athenacoins.commands;
 
-import lunatic.athenatoken.Main;
-import lunatic.athenatoken.databases.Database;
-import lunatic.athenatoken.utils.PlayerAthenaCoins;
+import lunatic.athenacoins.Main;
+import lunatic.athenacoins.databases.Database;
+import lunatic.athenacoins.utils.PlayerAthenaCoins;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

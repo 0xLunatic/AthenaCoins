@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AthenaCoins:jar">
+    <output-path>$PROJECT_DIR$/../localhost/plugins</output-path>
+    <root id="archive" name="AthenaCoins.jar">
+      <element id="module-output" name="AthenaCoins" />
+      <element id="extracted-dir" path="E:/pluginlib/PlaceholderAPI-2.11.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

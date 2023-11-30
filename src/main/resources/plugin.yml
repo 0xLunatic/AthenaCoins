@@ -1,6 +1,6 @@
-name: AthenaToken
+name: AthenaCoins
 version: '${project.version}'
-main: lunatic.athenatoken.Main
+main: lunatic.athenacoins.Main
 api-version: '1.20'
 commands:
   athenacoins:

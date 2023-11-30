@@ -1,4 +1,4 @@
-package lunatic.athenatoken.utils;
+package lunatic.athenacoins.utils;
 
 import java.util.UUID;
 
