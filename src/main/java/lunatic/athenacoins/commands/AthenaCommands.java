@@ -3,6 +3,7 @@ package lunatic.athenacoins.commands;
 import lunatic.athenacoins.Main;
 import lunatic.athenacoins.databases.Database;
 import lunatic.athenacoins.utils.PlayerAthenaCoins;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.Buffer;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -24,6 +26,13 @@ public class AthenaCommands implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (args[0].equalsIgnoreCase("db")) {
+            Bukkit.broadcastMessage("Active: " + String.valueOf(database.getActiveConnections()));
+            Bukkit.broadcastMessage("Idle: " + String.valueOf(database.getIdleConnections()));
+            Bukkit.broadcastMessage("Total: " + String.valueOf(database.getTotalConnections()));
+            return true;
+        }
+
         if (args.length <= 1 || (args[0].equalsIgnoreCase("add") && args.length < 3) ||
                 (args[0].equalsIgnoreCase("remove") && args.length < 3)) {
             sender.sendMessage("§cUsage: /athenacoins <add|remove|check|clear> [player] [value]");
@@ -91,6 +100,7 @@ public class AthenaCommands implements CommandExecutor, Listener {
             }
 
             return true;
+
         } else {
             String playerName = args[1];
             Player targetPlayer = plugin.getServer().getPlayer(playerName);

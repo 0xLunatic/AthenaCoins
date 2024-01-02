@@ -50,7 +50,11 @@ public class PlaceholderManager extends PlaceholderExpansion {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            return String.valueOf(coins.getAthenaCoins());
+            if (coins != null) {
+                return String.valueOf(coins.getAthenaCoins());
+            } else {
+                return "0";
+            }
         }
         return null;
     }

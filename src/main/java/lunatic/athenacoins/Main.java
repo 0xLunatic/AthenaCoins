@@ -12,6 +12,7 @@ import java.io.File;
 import java.sql.SQLException;
 
 public final class Main extends JavaPlugin {
+    public static Main instance;
     private Database database;
     private FileConfiguration config;
 
@@ -44,6 +45,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        database.closeDataSource();
     }
 
     // Method to save the default config.yml if it doesn't exist
@@ -58,4 +60,9 @@ public final class Main extends JavaPlugin {
     public Database getDatabase() {
         return database;
     }
+
+    public Main getInstance() {
+        return instance;
+    }
+
 }

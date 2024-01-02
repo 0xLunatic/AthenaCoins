@@ -4,6 +4,9 @@
     <root id="archive" name="AthenaCoins.jar">
       <element id="module-output" name="AthenaCoins" />
       <element id="extracted-dir" path="E:/pluginlib/PlaceholderAPI-2.11.5.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:2.0.0-alpha1" />
+      <element id="library" level="project" name="Maven: org.jetbrains:annotations:24.0.1" />
+      <element id="library" level="project" name="Maven: com.zaxxer:HikariCP:5.0.1" />
     </root>
   </artifact>
 </component>
