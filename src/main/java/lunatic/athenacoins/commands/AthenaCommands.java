@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.Buffer;
 import java.sql.SQLException;
 import java.util.UUID;
+
 
 public class AthenaCommands implements CommandExecutor, Listener {
     private final Main plugin;
@@ -26,135 +26,219 @@ public class AthenaCommands implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (args[0].equalsIgnoreCase("db")) {
-            Bukkit.broadcastMessage("Active: " + String.valueOf(database.getActiveConnections()));
-            Bukkit.broadcastMessage("Idle: " + String.valueOf(database.getIdleConnections()));
-            Bukkit.broadcastMessage("Total: " + String.valueOf(database.getTotalConnections()));
+        if (args.length == 0) {
+            sender.sendMessage("§cUsage: /athenacoins <add|remove|check|clear> <player> <value>");
             return true;
         }
 
-        if (args.length <= 1 || (args[0].equalsIgnoreCase("add") && args.length < 3) ||
-                (args[0].equalsIgnoreCase("remove") && args.length < 3)) {
-            sender.sendMessage("§cUsage: /athenacoins <add|remove|check|clear> [player] [value]");
-            return true;
-        }
+        String subcommand = args[0].toLowerCase();
+        String playerName;
+        Player player;
+        UUID uuid;
+        int previousToken;
+        int currentToken;
+        Long channel = 1192494512736575579L;
 
-        if (args[0].equalsIgnoreCase("check")) {
-            if (args.length < 2) {
-                sender.sendMessage("§cUsage: /athenacoins check <player>");
-                return true;
-            }
-
-            String playerName = args[1];
-            Player targetPlayer = plugin.getServer().getPlayer(playerName);
-
-            if (targetPlayer == null) {
-                sender.sendMessage("§cPlayer not found: " + playerName);
-                return true;
-            }
-
-            UUID playerUUID = targetPlayer.getUniqueId();
-
-            try {
-                PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(playerUUID);
-
-                if (athenaCoins == null) {
-                    sender.sendMessage(targetPlayer.getName() + " has 0 Athena Coins.");
-                } else {
-                    sender.sendMessage(targetPlayer.getName() + " has " + athenaCoins.getAthenaCoins() + " Athena Coins.");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                sender.sendMessage("§cAn error occurred while checking Athena Coins.");
-            }
-
-            return true;
-        } else if (args[0].equalsIgnoreCase("clear")) {
-            if (args.length < 2) {
-                sender.sendMessage("§cUsage: /athenacoins clear <player>");
-                return true;
-            }
-
-            String playerName = args[1];
-            Player targetPlayer = plugin.getServer().getPlayer(playerName);
-
-            if (targetPlayer == null) {
-                sender.sendMessage("§cPlayer not found: " + playerName);
-                return true;
-            }
-
-            UUID playerUUID = targetPlayer.getUniqueId();
-
-            try {
-                PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(playerUUID);
-
-                if (athenaCoins != null) {
-                    database.clearAthenaCoins(athenaCoins);
-                    sender.sendMessage("§aCleared Athena Coins for " + targetPlayer.getName() + ".");
-                } else {
-                    sender.sendMessage("§a" +targetPlayer.getName() + " has 0 Athena Coins.");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                sender.sendMessage("§cAn error occurred while clearing Athena Coins.");
-            }
-
-            return true;
-
-        } else {
-            String playerName = args[1];
-            Player targetPlayer = plugin.getServer().getPlayer(playerName);
-
-            if (targetPlayer == null) {
-                sender.sendMessage("§cPlayer not found: " + playerName);
-                return true;
-            }
-
-            int value;
-
-            try {
-                value = Integer.parseInt(args[2]);
-            } catch (NumberFormatException e) {
-                sender.sendMessage("§cInvalid value. Please provide a valid number.");
-                return true;
-            }
-
-            UUID playerUUID = targetPlayer.getUniqueId();
-
-            try {
-                PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(playerUUID);
-
-                if (athenaCoins == null) {
-                    // Player not in the database, create a new entry
-                    athenaCoins = new PlayerAthenaCoins(playerUUID, playerName, 0);
-                    database.createAthenaCoins(athenaCoins);
+        switch (subcommand) {
+            case "check":
+                if (args.length < 2) {
+                    sender.sendMessage("§7Usage: /athenacoins check <player>");
+                    break;
                 }
 
-                // Check if it's a remove command
-                if (args[0].equalsIgnoreCase("remove")) {
-                    // Check if there are enough coins to remove
-                    if (athenaCoins.getAthenaCoins() < value) {
-                        sender.sendMessage("§cNot enough Athena Coins to remove.");
-                        return true;
+                playerName = args[1];
+                player = plugin.getServer().getPlayer(playerName);
+
+                if (player != null) {
+                    uuid = player.getUniqueId();
+                    try {
+                        PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
+
+                        if (athenaCoins == null) {
+                            sender.sendMessage("§b" + player.getName() + "§a has §60 §aAthena Coins.");
+                        } else {
+                            sender.sendMessage("§b" + player.getName() + "§a has §6" + athenaCoins.getAthenaCoins() + " §aAthena Coins.");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while getting player's coin!");
                     }
 
-                    // Remove coins from the player
-                    database.addAthenaCoins(athenaCoins, -value);
-
-                    sender.sendMessage("§aRemoved " + value + " Athena Coins from " + targetPlayer.getName() + ".");
                 } else {
-                    // Add coins to the player
-                    database.addAthenaCoins(athenaCoins, value);
+                    try {
+                        uuid = database.getPlayerUUID(playerName);
+                        if (uuid != null ) {
+                            playerName = database.getPlayer(uuid.toString());
+                            PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
 
-                    sender.sendMessage("§aAdded " + value + " Athena Coins to " + targetPlayer.getName() + ".");
+                            if (athenaCoins.getPlayerName() == null) {
+                                sender.sendMessage("§b" + playerName + "§a has §60 §aAthena Coins.");
+                            } else {
+                                sender.sendMessage("§b" + playerName + "§a has §6" + athenaCoins.getAthenaCoins() + " §aAthena Coins.");
+                            }
+                        } else {
+                            sender.sendMessage("§cPlayer data cannot be found: §b" + playerName);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while checking Athena Coins.");
+                    }
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                sender.sendMessage("§cAn error occurred while updating Athena Coins.");
-            }
+                break;
 
-            return true;
+            case "clear":
+                if (args.length < 2) {
+                    sender.sendMessage("§cUsage: /athenacoins clear <player>");
+                    break;
+                }
+
+                playerName = args[1];
+                player = plugin.getServer().getPlayer(playerName);
+
+                if (player != null) {
+                    uuid = player.getUniqueId();
+                    try {
+                        PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
+
+                        if (athenaCoins == null) {
+                            sender.sendMessage("§b" + player.getName() + "§a has §60 §aAthena Coins.");
+                        } else {
+                            previousToken = athenaCoins.getAthenaCoins();
+                            database.clearAthenaCoins(athenaCoins);
+                            sender.sendMessage("§aSuccesfully purged coins of §b" + player.getName() + "§a!");
+                            plugin.getChronoLogger().logEmbedToken(playerName, uuid.toString(), String.valueOf(previousToken), "0", "Token Clear", "-", sender.getName(), channel);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while getting player's coin!");
+                    }
+
+                } else {
+                    try {
+                        uuid = database.getPlayerUUID(playerName);
+                        playerName = database.getPlayer(uuid.toString());
+                        if (uuid != null) {
+                            PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
+
+                            if (athenaCoins == null) {
+                                sender.sendMessage("§b" + playerName + "§a has §60 §aAthena Coins.");
+                            } else {
+                                database.clearAthenaCoins(athenaCoins);
+                                sender.sendMessage("§aSuccesfully purged coins of §b" + playerName + "§a!");
+                            }
+                        } else {
+                            sender.sendMessage("§cPlayer data cannot be found: " + playerName);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while checking Athena Coins.");
+                    }
+                }
+                break;
+
+            case "add":
+                if (args.length < 2) {
+                    sender.sendMessage("§cUsage: /athenacoins add <player> <value>");
+                    break;
+                }
+
+                playerName = args[1];
+                player = Bukkit.getPlayer(playerName);
+
+                if (player != null) {
+                    try {
+                        int value = Integer.parseInt(args[2]);
+                        uuid = player.getUniqueId();
+                        playerName = player.getName();
+                        PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
+
+                        if (athenaCoins.getPlayerName() == null) {
+                            previousToken = athenaCoins.getAthenaCoins();
+                            athenaCoins = new PlayerAthenaCoins(uuid, playerName, value);
+                            database.createAthenaCoins(athenaCoins);
+                            sender.sendMessage("§aSuccesfully added §6" + value + " §acoins to " + playerName + "§a!");
+                            currentToken = previousToken + value;
+                            plugin.getChronoLogger().logEmbedToken(playerName, uuid.toString(), "0", String.valueOf(currentToken), "Token Add", String.valueOf(value), sender.getName(), channel);
+                        } else {
+                            previousToken = athenaCoins.getAthenaCoins();
+                            database.addAthenaCoins(athenaCoins, value);
+                            sender.sendMessage("§aSuccesfully added §6" + value + " §acoins to " + playerName + "§a!");
+                            currentToken = previousToken + value;
+                            plugin.getChronoLogger().logEmbedToken(playerName, uuid.toString(), String.valueOf(previousToken), String.valueOf(currentToken), "Token Add", String.valueOf(value), sender.getName(), channel);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cInvalid value of coin, Please provide a valid number.");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while updating Athena Coins.");
+                    }
+                } else {
+                    sender.sendMessage("§b" + playerName + "§c seems to be offline!");
+                }
+                break;
+
+            case "remove":
+                if (args.length < 2) {
+                    sender.sendMessage("§cUsage: /athenacoins remove <player> <value>");
+                    break;
+                }
+
+                playerName = args[1];
+                player = Bukkit.getPlayer(playerName);
+
+                if (player != null) {
+                    try {
+                        int value = Integer.parseInt(args[2]);
+                        uuid = player.getUniqueId();
+                        playerName = player.getName();
+                        PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
+
+                        if (athenaCoins.getPlayerName() == null || athenaCoins.getAthenaCoins() <= value) {
+                            sender.sendMessage("§b" + playerName +  " §cdoesn't has enough Coins to be removed!");
+                        } else {
+                            previousToken = athenaCoins.getAthenaCoins();
+                            database.addAthenaCoins(athenaCoins, -value);
+                            currentToken = previousToken - value;
+                            sender.sendMessage("§aSuccesfully removed §6" + value + " §acoins from " + playerName + "§a!");
+                            plugin.getChronoLogger().logEmbedToken(playerName, uuid.toString(), String.valueOf(previousToken), String.valueOf(currentToken), "Token Remove", String.valueOf(value), sender.getName(), channel);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cInvalid value of coin, Please provide a valid number.");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while updating Athena Coins.");
+                    }
+                } else {
+                    try {
+                        int value = Integer.parseInt(args[2]);
+                        uuid = database.getPlayerUUID(playerName);
+                        playerName = database.getPlayer(uuid.toString());
+                        PlayerAthenaCoins athenaCoins = database.getAthenaCoinsByUUID(uuid);
+
+                        if (athenaCoins.getPlayerName() == null || athenaCoins.getAthenaCoins() <= value) {
+                            sender.sendMessage("§b" + playerName +  " §cdoesn't has enough Coins to be removed!");
+                        } else {
+                            previousToken = athenaCoins.getAthenaCoins();
+                            database.addAthenaCoins(athenaCoins, -value);
+                            currentToken = previousToken - value;
+                            sender.sendMessage("§aSuccesfully removed §6" + value + " §acoins from " + playerName + "§a!");
+                            plugin.getChronoLogger().logEmbedToken(playerName, uuid.toString(), String.valueOf(previousToken), String.valueOf(currentToken), "Token Add", String.valueOf(value), sender.getName(), channel);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cInvalid value of coin, Please provide a valid number.");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("§cAn error occurred while updating Athena Coins.");
+                    }
+                }
+                break;
+
+            default:
+                sender.sendMessage("§cInvalid subcommand");
         }
+        return true;
     }
 }
-

@@ -4,3 +4,5 @@ database:
   database: "AthenaCoins"
   user: "root"
   password: ""
+
+command-prefix: athenacoins

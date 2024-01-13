@@ -152,6 +152,37 @@ public class Database {
         }
     }
 
+    public String getPlayer(String uuid) throws SQLException {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection
+                     .prepareStatement("SELECT player_name FROM coins WHERE player_uuid = ?")) {
+
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("player_name");
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public UUID getPlayerUUID(String username) throws SQLException {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection
+                     .prepareStatement("SELECT player_uuid FROM coins WHERE player_name = ?")) {
+
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String uuid = resultSet.getString("player_uuid");
+                return UUID.fromString(uuid);
+            } else {
+                return null;
+            }
+        }
+    }
+
     public void closeConnection(Connection connection) {
         dataSource.evictConnection(connection);
     }

@@ -4,6 +4,8 @@ import lunatic.athenacoins.commands.AthenaCommands;
 import lunatic.athenacoins.commands.TabCompleters;
 import lunatic.athenacoins.databases.Database;
 import lunatic.athenacoins.papi.PlaceholderManager;
+import me.kenvera.chronocore.ChronoCore;
+import me.kenvera.chronocore.hooks.ChronoLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,13 +15,13 @@ import java.sql.SQLException;
 
 public final class Main extends JavaPlugin {
     public static Main instance;
+    private ChronoCore chronoCore;
+    private ChronoLogger chronoLogger;
     private Database database;
     private FileConfiguration config;
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        // Initialize the database
         try {
             this.database = new Database(this);
             database.initializeDatabase();
@@ -37,8 +39,10 @@ public final class Main extends JavaPlugin {
         getCommand("athenacoins").setTabCompleter(new TabCompleters(this));
 
         // Check if PlaceholderAPI is present and register placeholder if true
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null && Bukkit.getPluginManager().getPlugin("ChronoCore") != null) {
             new PlaceholderManager(this, database).register();
+            chronoCore = (ChronoCore) Bukkit.getPluginManager().getPlugin("ChronoCore");
+            chronoLogger = chronoCore.getChronoLogger();
         }
     }
 
@@ -63,6 +67,10 @@ public final class Main extends JavaPlugin {
 
     public Main getInstance() {
         return instance;
+    }
+
+    public ChronoLogger getChronoLogger() {
+        return chronoLogger;
     }
 
 }
