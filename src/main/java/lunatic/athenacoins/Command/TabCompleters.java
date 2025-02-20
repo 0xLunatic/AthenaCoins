@@ -1,6 +1,6 @@
-package lunatic.athenacoins.commands;
+package lunatic.athenacoins.Command;
 
-import lunatic.athenacoins.Main;
+import lunatic.athenacoins.AthenaCoins;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class TabCompleters implements TabCompleter {
-    private final Main plugin;
-    public TabCompleters(Main plugin) {
+    private final AthenaCoins plugin;
+    public TabCompleters(AthenaCoins plugin) {
         this.plugin = plugin;
     }
     @Override

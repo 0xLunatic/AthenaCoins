@@ -1,7 +1,9 @@
 name: AthenaCoins
 version: '${project.version}'
-main: lunatic.athenacoins.Main
+main: lunatic.athenacoins.AthenaCoins
 api-version: '1.20'
+softdepend: [ChronoCord]
 commands:
   athenacoins:
     permission: athenacoins.admin
+    aliases: nc
